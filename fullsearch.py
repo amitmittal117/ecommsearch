@@ -3,11 +3,12 @@ import re
 from urllib import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 from openpyxl import Workbook
+
 import time
 book = Workbook()
 sheet = book.active
 
-searchfield="iphone 6"
+searchfield="SanDisk 32GB"
 datalist=[]
 def mainfun(my_url):
 	uClient = uReq(my_url)
@@ -19,9 +20,14 @@ def mainfun(my_url):
 	product_name = page_soup.findAll("h1",{"class":"_3eAQiD"})[0].text
 	product_price = page_soup.findAll("div",{"class":"_1vC4OE _37U4_g"})[0].text
 	try:
-		product_del = page_soup.findAll("div",{"class":"_1vC4OE _3nCwDW"})[0].text
+		product_actualprice = page_soup.findAll("div",{"class":"_3auQ3N _16fZeb"})[0].text
 	except:
-		product_del = "Not Available"
+		product_actualprice = "Not Available"
+	try:
+		product_discount = page_soup.findAll("div",{"class":"VGWI6T _3GXWnA"})[0].text
+	except:
+		product_discount = "No Discount on Flipkart"
+		# product_discount = "0% off"
 	try:
 		product_warranty = page_soup.findAll("div",{"class":"_3h7IGd"})[0].text
 	except:
@@ -35,27 +41,20 @@ def mainfun(my_url):
 	except:
 		product_available = "Available"
 	update_time = time.asctime(time.localtime(time.time()))
-	# if searchfield in product_name:
+	# if int(product_discount.split("%")[0]) >=20:
 	print "Product Name  : "+ product_name
-	datalist.append(product_name)
 	print "Product Rating: "+ product_rating
-	datalist.append(product_rating)
 	print "Product Cost  : "+ product_price
-	datalist.append(product_price)
-	print "product_Del   : Delivery in "+ product_del
-	datalist.append(product_del)	
+	print "Actual Price  : "+ product_actualprice
+	print "Discount Price: "+ product_discount
 	print "Warranty      : "+ product_warranty
-	datalist.append(product_warranty)
 	print "Availablity   : "+ product_available
-	datalist.append(product_available)
 	print "Product Url   : "+ my_url
-	datalist.append(my_url)
 	print "Update Time   : "+ update_time
-	datalist.append(update_time)
 	print"------------------------------------------------"
-	sheet.append(datalist)
-	excelfilename = my_url.replace('https://','').replace('.','').replace('?','').replace('/',' ')
-	book.save(excelfilename)
+	# sheet.append(datalist)
+	# excelfilename = my_url.replace('https://','').replace('.','').replace('?','').replace('/',' ')
+	# book.save(excelfilename)
 
 
 
